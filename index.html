@@ -3,115 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <title>Domo Prueba</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 10px;
             background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h3 {
+            text-align: center;
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 18px;
+        }
+        .subtitulo {
+            text-align: center;
+            color: #666;
+            margin: 0 0 15px 0;
+            font-size: 13px;
         }
         .carrusel {
             position: relative;
-            max-width: 600px;
-            margin: 0 auto;
             overflow: hidden;
             border-radius: 10px;
             background: #ddd;
+            width: 100%;
+            aspect-ratio: 16/9;
+            max-height: 450px;
         }
         .slides {
             display: flex;
             transition: transform 0.5s ease;
+            height: 100%;
         }
         .slide {
             min-width: 100%;
-            min-height: 300px;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #eee;
         }
         .slide img {
             width: 100%;
-            height: auto;
-            max-height: 500px;
+            height: 100%;
             object-fit: contain;
         }
         .btn {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 12px 16px;
             cursor: pointer;
             font-size: 20px;
-            border-radius: 5px;
+            border-radius: 50%;
             z-index: 10;
+            transition: background 0.3s;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .btn:hover { background: rgba(0,0,0,0.8); }
-        .btn-left { left: 10px; }
-        .btn-right { right: 10px; }
+        .btn:hover {
+            background: rgba(0,0,0,0.9);
+        }
+        .btn-left { left: 8px; }
+        .btn-right { right: 8px; }
         .puntos {
             text-align: center;
-            padding: 10px;
+            padding: 12px 0 5px 0;
         }
         .punto {
             display: inline-block;
             width: 10px;
             height: 10px;
-            margin: 0 5px;
+            margin: 0 4px;
             background: #bbb;
             border-radius: 50%;
             cursor: pointer;
+            transition: background 0.3s;
         }
-        .punto.activo { background: #333; }
+        .punto.activo {
+            background: #333;
+        }
+        .punto:hover {
+            background: #888;
+        }
+        /* Mensaje de error si no cargan las imágenes */
+        .error-msg {
+            display: none;
+            color: #999;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
-    <div style="text-align: center; margin-bottom: 10px;">
+    <div class="container">
         <h3>📷 Domo Prueba</h3>
-        <small>Domo Daño - mas adelante del domo de los micos</small>
-    </div>
+        <p class="subtitulo">Domo Daño - mas adelante del domo de los micos</p>
 
-    <div class="carrusel">
-        <div class="slides" id="slides">
-            <div class="slide"><img src="https://i.imgur.com/klovdLU.jpeg" alt="Imagen 1"></div>
-            <div class="slide"><img src="https://i.imgur.com/yHjoI9W.jpeg" alt="Imagen 2"></div>
-            <div class="slide"><img src="https://i.imgur.com/Pk0yH6r.jpeg" alt="Imagen 3"></div>
-            <div class="slide"><img src="https://i.imgur.com/ex3hqiX.jpeg" alt="Imagen 4"></div>
+        <div class="carrusel">
+            <div class="slides" id="slides">
+                <div class="slide"><img src="https://i.postimg.cc/438JMXhL/img1.jpg" alt="Imagen 1" onerror="this.parentElement.innerHTML='<p style=color:#999;>❌ Imagen no disponible</p>'"></div>
+                <div class="slide"><img src="https://i.postimg.cc/HxtH1HNf/img2.jpg" alt="Imagen 2" onerror="this.parentElement.innerHTML='<p style=color:#999;>❌ Imagen no disponible</p>'"></div>
+                <div class="slide"><img src="https://i.postimg.cc/fy2NkCMW/img3.jpg" alt="Imagen 3" onerror="this.parentElement.innerHTML='<p style=color:#999;>❌ Imagen no disponible</p>'"></div>
+            </div>
+            <button class="btn btn-left" onclick="cambiarSlide(-1)">❮</button>
+            <button class="btn btn-right" onclick="cambiarSlide(1)">❯</button>
         </div>
-        <button class="btn btn-left" onclick="cambiarSlide(-1)">❮</button>
-        <button class="btn btn-right" onclick="cambiarSlide(1)">❯</button>
+        <div class="puntos" id="puntos"></div>
     </div>
-    <div class="puntos" id="puntos"></div>
 
     <script>
-        let indice = 0;
-        const slides = document.querySelectorAll('.slide');
-        const puntos = document.getElementById('puntos');
+        // Función para inicializar el carrusel cuando el DOM esté listo
+        function initCarrusel() {
+            const slides = document.querySelectorAll('.slide');
+            if (slides.length === 0) return;
+            
+            const puntos = document.getElementById('puntos');
+            let indice = 0;
 
-        // Crear puntos
-        slides.forEach((_, i) => {
-            const p = document.createElement('span');
-            p.className = 'punto' + (i === 0 ? ' activo' : '');
-            p.onclick = () => irSlide(i);
-            puntos.appendChild(p);
-        });
+            // Crear puntos
+            slides.forEach((_, i) => {
+                const p = document.createElement('span');
+                p.className = 'punto' + (i === 0 ? ' activo' : '');
+                p.onclick = () => irSlide(i);
+                puntos.appendChild(p);
+            });
 
-        function actualizarCarrusel() {
-            document.querySelector('.slides').style.transform = `translateX(-${indice * 100}%)`;
-            document.querySelectorAll('.punto').forEach((p, i) => {
-                p.className = 'punto' + (i === indice ? ' activo' : '');
+            function actualizarCarrusel() {
+                const slidesContainer = document.querySelector('.slides');
+                if (slidesContainer) {
+                    slidesContainer.style.transform = `translateX(-${indice * 100}%)`;
+                }
+                document.querySelectorAll('.punto').forEach((p, i) => {
+                    p.className = 'punto' + (i === indice ? ' activo' : '');
+                });
+            }
+
+            window.cambiarSlide = function(dir) {
+                indice = (indice + dir + slides.length) % slides.length;
+                actualizarCarrusel();
+            };
+
+            window.irSlide = function(i) {
+                indice = i;
+                actualizarCarrusel();
+            };
+
+            // Inicializar
+            actualizarCarrusel();
+
+            // Soporte para teclado
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') window.cambiarSlide(-1);
+                else if (e.key === 'ArrowRight') window.cambiarSlide(1);
             });
         }
 
-        function cambiarSlide(dir) {
-            indice = (indice + dir + slides.length) % slides.length;
-            actualizarCarrusel();
-        }
-
-        function irSlide(i) {
-            indice = i;
-            actualizarCarrusel();
+        // Ejecutar cuando la página esté cargada
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCarrusel);
+        } else {
+            initCarrusel();
         }
     </script>
 </body>
-</html>       
-     
+</html>
