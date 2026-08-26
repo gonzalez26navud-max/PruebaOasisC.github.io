@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Domo Prueba</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background: #f0f0f0;
+        }
+        .carrusel {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #ddd;
+        }
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        .slide {
+            min-width: 100%;
+            min-height: 300px;
+        }
+        .slide img {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: contain;
+        }
+        .btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 20px;
+            border-radius: 5px;
+            z-index: 10;
+        }
+        .btn:hover { background: rgba(0,0,0,0.8); }
+        .btn-left { left: 10px; }
+        .btn-right { right: 10px; }
+        .puntos {
+            text-align: center;
+            padding: 10px;
+        }
+        .punto {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin: 0 5px;
+            background: #bbb;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .punto.activo { background: #333; }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; margin-bottom: 10px;">
+        <h3>📷 Domo Prueba</h3>
+        <small>Domo Daño - mas adelante del domo de los micos</small>
+    </div>
+
+    <div class="carrusel">
+        <div class="slides" id="slides">
+            <div class="slide"><img src="https://i.imgur.com/klovdLU.jpeg" alt="Imagen 1"></div>
+            <div class="slide"><img src="https://i.imgur.com/Pk0yH6r.jpeg" alt="Imagen 3"></div>
+            <div class="slide"><img src="https://i.imgur.com/ex3hqiX.jpeg" alt="Imagen 4"></div>
+        </div>
+        <button class="btn btn-left" onclick="cambiarSlide(-1)">❮</button>
+        <button class="btn btn-right" onclick="cambiarSlide(1)">❯</button>
+    </div>
+    <div class="puntos" id="puntos"></div>
+
+    <script>
+        let indice = 0;
+        const slides = document.querySelectorAll('.slide');
+        const puntos = document.getElementById('puntos');
+
+        // Crear puntos
+        slides.forEach((_, i) => {
+            const p = document.createElement('span');
+            p.className = 'punto' + (i === 0 ? ' activo' : '');
+            p.onclick = () => irSlide(i);
+            puntos.appendChild(p);
+        });
+
+        function actualizarCarrusel() {
+            document.querySelector('.slides').style.transform = `translateX(-${indice * 100}%)`;
+            document.querySelectorAll('.punto').forEach((p, i) => {
+                p.className = 'punto' + (i === indice ? ' activo' : '');
+            });
+        }
+
+        function cambiarSlide(dir) {
+            indice = (indice + dir + slides.length) % slides.length;
+            actualizarCarrusel();
+        }
+
+        function irSlide(i) {
+            indice = i;
+            actualizarCarrusel();
+        }
+    </script>
+</body>
+</html>       <div class="slide"><img src="https://i.imgur.com/yHjoI9W.jpeg" alt="Imagen 2"></div>
+     
